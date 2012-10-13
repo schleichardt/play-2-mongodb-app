@@ -13,7 +13,8 @@ object ApplicationBuild extends Build {
 
   val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
     routesImport += "se.radley.plugin.salat.Binders._",
-    templatesImport += "org.bson.types.ObjectId"
+    templatesImport += "org.bson.types.ObjectId",
+    ebeanEnabled := false
   ).configs(IntegrationTest)
     .settings(Defaults.itSettings: _*)
     .settings(

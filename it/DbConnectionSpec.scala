@@ -1,5 +1,6 @@
 import com.mongodb.casbah
 import java.util.UUID
+import org.specs2.execute.Result
 import org.specs2.mutable._
 import org.specs2.specification._
 import play.api.test._
@@ -69,7 +70,7 @@ class DbConnectionSpec extends Specification {
   }
 
 
-  def withEmptyCollection(block: MongoCollection => Example)(implicit app: Application) = {
+  def withEmptyCollection(block: MongoCollection => Result)(implicit app: Application) = {
     val collection = emptyTestCollection()
     try {
       block(collection)
@@ -78,7 +79,7 @@ class DbConnectionSpec extends Specification {
     }
   }
 
-  def withUserCollection(block: MongoCollection => Example)(implicit app: Application) = {
+  def withUserCollection(block: MongoCollection => Result)(implicit app: Application): Result = {
     val collection = emptyTestCollection()
     collection += MongoDBObject("firstname" -> "Michael", "lastname" -> "Schleichardt")
     collection += MongoDBObject("firstname" -> "Max", "lastname" -> "Mustermann", "email" -> "max@localhost")

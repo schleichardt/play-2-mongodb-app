@@ -10,7 +10,7 @@ import com.mongodb.casbah.Imports._
 import play.api.Application
 import info.schleichardt.ic2.db.DbTestTools._
 
-class CasbahSpec extends Specification {
+class CasbahCrudSpec extends Specification {
   "with Casbah you" can {
     "store a document" in {
       implicit val app = FakeApplication()

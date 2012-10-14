@@ -2,7 +2,7 @@ package info.schleichardt.ic2.db.koans
 
 import com.mongodb.casbah
 import java.util.UUID
-import org.specs2.execute.Result
+import org.specs2.execute._
 import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
@@ -44,6 +44,10 @@ class CasbahSpec extends Specification {
             worked must beTrue
         }
       }
+    }
+
+    "retrieve data with all types of MongoDB" in {
+      Pending("TODO http://www.mongodb.org/display/DOCS/Data+Types+and+Conventions")
     }
   }
 

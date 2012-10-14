@@ -1,32 +1,17 @@
+package info.schleichardt.ic2.db.koans
+
 import com.mongodb.casbah
 import java.util.UUID
 import org.specs2.execute.Result
 import org.specs2.mutable._
-import org.specs2.specification._
 import play.api.test._
 import play.api.test.Helpers._
-import se.radley.plugin.salat._
 import com.mongodb.casbah.Imports._
 import play.api.Application
+import info.schleichardt.ic2.db.DbTestTools._
 
-class DbConnectionSpec extends Specification {
-  def salatPlugin(implicit app: Application): SalatPlugin = app.plugin(classOf[SalatPlugin]).get
-
-  "The application" can {
-    "start with salat plugin" in {
-      implicit val app = FakeApplication()
-      running(app) {
-        salatPlugin.enabled === true
-      }
-    }
-
-    "connect to the MongoDB" in {
-      implicit val app = FakeApplication()
-      running(app) {
-        salatPlugin.db().stats.ok === true
-      }
-    }
-
+class CasbahSpec extends Specification {
+  "with Casbah you" can {
     "store a document" in {
       implicit val app = FakeApplication()
       running(app) {

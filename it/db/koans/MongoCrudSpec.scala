@@ -47,7 +47,7 @@ class CasbahSpec extends Specification {
     }
 
     "retrieve data with all types of MongoDB" in {
-      Pending("TODO http://www.mongodb.org/display/DOCS/Data+Types+and+Conventions")
+      Pending("TODO http://www.mongodb.org/display/DOCS/Data+Types+and+Conventions and http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24type")
     }
   }
 

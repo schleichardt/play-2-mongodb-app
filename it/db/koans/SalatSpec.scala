@@ -19,6 +19,7 @@ import com.novus.salat._
 import com.novus.salat.annotations._
 import com.novus.salat.global._
 import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 
 //some code is from https://github.com/novus/salat/wiki/SalatWithPlay2
 
@@ -35,6 +36,13 @@ class SalatSpec extends Specification {
       fields.get("firstName") must beEqualTo(michael.firstName)
       fields.get("lastName") must beEqualTo(michael.lastName)
       fields.get("yearOfBirth") must beEqualTo(michael.yearOfBirth)
+    }
+
+    "create a case class instance from a DBObject" in {
+      //shows also how to create a DBObject from a Map
+      val dbObject: DBObject = new BasicDBObject(Map("firstName" -> "Max", "lastName" -> "Mustermann", "yearOfBirth" -> 1970))
+      val person: Person = grater[Person].asObject(dbObject)
+      Person("Max", "Mustermann", 1970) mustEqual person
     }
   }
 }

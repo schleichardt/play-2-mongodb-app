@@ -97,6 +97,52 @@ class CasbahCrudSpec extends Specification {
     "retrieve data with all types of MongoDB" in {
       Pending("TODO http://www.mongodb.org/display/DOCS/Data+Types+and+Conventions and http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24type")
     }
+
+    "combine MongodDBObjects and the last setting wins" in {
+      val combined1 = MongoDBObject("eins" -> "1") ++ MongoDBObject("zwei" -> "2")
+
+      combined1.getAs[String]("eins") must beSome("1")
+      combined1.getAs[String]("zwei") must beSome("2")
+
+      val combined2 = combined1 ++ MongoDBObject("eins" -> "one")
+      combined2.getAs[String]("eins") must beSome("one")
+      combined2.getAs[String]("zwei") must beSome("2")
+    }
+
+    "update a document" in {
+      runningMongoApp {
+        withUserCollection {
+          users =>
+            val maxCriteria = MongoDBObject("firstname" -> "Max")
+            val newNameCriteria = MongoDBObject("firstname" -> "NewName")
+            users.find(maxCriteria).size === 1
+            users.update(maxCriteria, newNameCriteria )
+            users.find(maxCriteria).size === 0
+        }
+      }
+    }
+
+    "delete some elements of a collection" in {
+      runningMongoApp {
+        withUserCollection {
+          users =>
+            val sizeBefore = users.size
+            users.remove(MongoDBObject("firstname" -> "Max"))
+            users.size mustEqual sizeBefore - 1
+        }
+      }
+    }
+
+    "drop an entire collection" in {
+      runningMongoApp {
+        withUserCollection {
+          users =>
+            users.size must be_>=(1)
+            users.drop()
+            users.size mustEqual 0
+        }
+      }
+    }
   }
 
   def emptyTestCollection()(implicit app: Application): MongoCollection = {

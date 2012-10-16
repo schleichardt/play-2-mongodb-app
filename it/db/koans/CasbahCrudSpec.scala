@@ -12,7 +12,7 @@ import info.schleichardt.ic2.db.DbTestTools._
 
 class CasbahCrudSpec extends Specification {
   "with Casbah you" can {
-    "store a document" in {
+    "store a single document" in {
       implicit val app = FakeApplication()
       running(app) {
         withEmptyCollection {
@@ -23,8 +23,8 @@ class CasbahCrudSpec extends Specification {
             collection.size === 1
             collection.findOne().get.getAs[String]("eins").get === "1"
 
-            val db: casbah.MongoDB = salatPlugin.db()
-            db.stats.ok === true
+            collection.insert(MongoDBObject("eins" -> "1"))
+            collection.size === 2
         }
       }
     }

@@ -9,12 +9,12 @@ import play.api.test.Helpers._
 import com.mongodb.casbah.Imports._
 import play.api.Application
 import info.schleichardt.ic2.db.DbTestTools._
+import play.api.Play.current
 
 class CasbahCrudSpec extends Specification {
   "with Casbah you" can {
     "store a single document" in {
-      implicit val app = FakeApplication()
-      running(app) {
+      runningMongoApp {
         withEmptyCollection {
           collection =>
             val data = MongoDBObject("eins" -> "1", "zwei" -> 2, "drei" -> 3.0)
@@ -30,8 +30,7 @@ class CasbahCrudSpec extends Specification {
     }
 
     "search a document" in {
-      implicit val app = FakeApplication()
-      running(app) {
+      runningMongoApp {
         withUserCollection {
           users =>
             val julia = users.findOne(MongoDBObject("firstname" -> "Julia")).get

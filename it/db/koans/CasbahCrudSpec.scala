@@ -35,7 +35,47 @@ class CasbahCrudSpec extends Specification {
           }
         }
       }
+    }
 
+    "store multiple documents (batch insert, fast)" in {
+      "with explicit number of elements" in {
+        runningMongoApp {
+          withEmptyCollection {
+            collection =>
+              collection.insert(createMongoDbObject(), createMongoDbObject(), createMongoDbObject())
+              collection.size === 3
+          }
+        }
+      }
+
+      "with unknown number of elements" in {
+        runningMongoApp {
+          withEmptyCollection {
+            collection =>
+              val list = List(createMongoDbObject(), createMongoDbObject(), createMongoDbObject())
+              collection.insert(list: _*)
+              collection.size === list.size
+          }
+        }
+      }
+
+      "does not have mongos 16MB per batch insert limitation" in {
+        if (false) {
+          runningMongoApp {
+            withEmptyCollection {
+              collection =>
+                val oneMegabyteInBytes = 1048576
+                val limit = 16 * oneMegabyteInBytes
+                val bytesPerObject = 10
+                val objectNumberToExceedLimit = limit / bytesPerObject + 1
+                val manyObjects = for (i <- 0 until objectNumberToExceedLimit) yield MongoDBObject("x" -> "123456789")
+                collection.insert(manyObjects: _*)
+                collection.size === manyObjects.size
+            }
+          }
+        } else skipped("runs too long")
+
+      }
     }
 
     "search a document" in {

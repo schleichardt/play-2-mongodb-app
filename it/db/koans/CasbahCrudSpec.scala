@@ -1,32 +1,41 @@
 package info.schleichardt.ic2.db.koans
 
-import com.mongodb.casbah
 import java.util.UUID
 import org.specs2.execute._
 import org.specs2.mutable._
-import play.api.test._
-import play.api.test.Helpers._
 import com.mongodb.casbah.Imports._
 import play.api.Application
 import info.schleichardt.ic2.db.DbTestTools._
 import play.api.Play.current
 
 class CasbahCrudSpec extends Specification {
+  def createMongoDbObject() = MongoDBObject("eins" -> "1", "zwei" -> 2, "drei" -> 3.0)
+
   "with Casbah you" can {
     "store a single document" in {
-      runningMongoApp {
-        withEmptyCollection {
-          collection =>
-            val data = MongoDBObject("eins" -> "1", "zwei" -> 2, "drei" -> 3.0)
-            collection += data
 
-            collection.size === 1
-            collection.findOne().get.getAs[String]("eins").get === "1"
-
-            collection.insert(MongoDBObject("eins" -> "1"))
-            collection.size === 2
+      "a scala like syntax" in {
+        runningMongoApp {
+          withEmptyCollection {
+            collection =>
+              collection += createMongoDbObject()
+              collection.size === 1
+              collection.findOne().get.getAs[String]("eins").get === "1"
+          }
         }
       }
+
+      "a mongo like syntax" in {
+        runningMongoApp {
+          withEmptyCollection {
+            collection =>
+              collection.insert(createMongoDbObject())
+              collection.size === 1
+              collection.findOne().get.getAs[String]("eins").get === "1"
+          }
+        }
+      }
+
     }
 
     "search a document" in {

@@ -7,10 +7,9 @@ import com.mongodb.casbah.Imports._
 import play.api.Application
 import info.schleichardt.ic2.db.DbTestTools._
 import play.api.Play.current
+import org.specs2.matcher.ResultMatchers
 
-class CasbahCrudSpec extends Specification {
-  def createMongoDbObject() = MongoDBObject("eins" -> "1", "zwei" -> 2, "drei" -> 3.0)
-
+class CasbahCrudSpec extends Specification with ResultMatchers {
   "with Casbah you" can {
     "store a single document" in {
 
@@ -109,25 +108,12 @@ class CasbahCrudSpec extends Specification {
       combined2.getAs[String]("zwei") must beSome("2")
     }
 
-    "update a document" in {
-      runningMongoApp {
-        withUserCollection {
-          users =>
-            val maxCriteria = MongoDBObject("firstname" -> "Max")
-            val newNameCriteria = MongoDBObject("firstname" -> "NewName")
-            users.find(maxCriteria).size === 1
-            users.update(maxCriteria, newNameCriteria )
-            users.find(maxCriteria).size === 0
-        }
-      }
-    }
-
     "delete some elements of a collection" in {
       runningMongoApp {
         withUserCollection {
           users =>
             val sizeBefore = users.size
-            users.remove(MongoDBObject("firstname" -> "Max"))
+            users.remove(queryMax())
             users.size mustEqual sizeBefore - 1
         }
       }
@@ -143,7 +129,50 @@ class CasbahCrudSpec extends Specification {
         }
       }
     }
+
+    "update documents" in {
+      "using document replacement" in {//this is useful if you serialized the object
+        runningMongoApp {
+          withUserCollection {
+            users =>
+              val newNameCriteria = MongoDBObject("firstname" -> "NewName")
+              users.find(queryMax).size === 1
+              users.find(newNameCriteria).size === 0
+
+              val selectStatement = queryMax
+              val updateStatement = newNameCriteria
+              users.update(selectStatement, updateStatement )
+              users.find(queryMax).size === 0
+              users.find(newNameCriteria).size === 1
+              users.findOne(newNameCriteria).get.getAs[String]("email") === None //overriding may causes data loss
+          }
+        }
+      }
+
+      "using $set" in {
+          runningMongoApp {
+            withUserCollection {
+              users =>
+                val newEmail = 42
+                users.update(queryMax(), $set ("email" -> newEmail) ) //query can change type #email
+                val max = users.findOne(queryMax()).get
+                max.getAs[String]("lastname") must beSome(maxLastname) //lastname not changed or empty
+                max.getAs[Int]("email") must beSome(newEmail)
+            }
+          }
+      }
+    }
   }
+
+  val maxLastname = "Mustermann"
+
+  def createMongoDbObject() = MongoDBObject("eins" -> "1", "zwei" -> 2, "drei" -> 3.0)
+
+  def queryMichael() = MongoDBObject("firstname" -> "Michael", "lastname" -> "Schleichardt")
+
+  def fullQueryMax() = MongoDBObject("firstname" -> "Max", "lastname" -> maxLastname, "email" -> "max@localhost")
+
+  def queryMax() = MongoDBObject("firstname" -> "Max")
 
   def emptyTestCollection()(implicit app: Application): MongoCollection = {
     val collection = salatPlugin.collection("collection_for_tests" + UUID.randomUUID().toString)
@@ -151,7 +180,6 @@ class CasbahCrudSpec extends Specification {
     collection.size === 0
     collection
   }
-
 
   def withEmptyCollection(block: MongoCollection => Result)(implicit app: Application) = {
     val collection = emptyTestCollection()
@@ -164,8 +192,8 @@ class CasbahCrudSpec extends Specification {
 
   def withUserCollection(block: MongoCollection => Result)(implicit app: Application): Result = {
     val collection = emptyTestCollection()
-    collection += MongoDBObject("firstname" -> "Michael", "lastname" -> "Schleichardt")
-    collection += MongoDBObject("firstname" -> "Max", "lastname" -> "Mustermann", "email" -> "max@localhost")
+    collection += queryMichael
+    collection += fullQueryMax
     collection += MongoDBObject("firstname" -> "Julia", "lastname" -> "Musterfrau", "email" -> "julia@localhost")
     try {
       block(collection)

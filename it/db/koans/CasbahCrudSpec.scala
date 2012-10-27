@@ -1,9 +1,11 @@
 package info.schleichardt.ic2.db.koans
 
+
+import com.mongodb.casbah.query.Imports.IntOk
 import java.util.UUID
 import org.specs2.execute._
-import org.specs2.mutable._
 import com.mongodb.casbah.Imports._
+import org.specs2.mutable._
 import play.api.Application
 import info.schleichardt.ic2.db.DbTestTools._
 import play.api.Play.current
@@ -131,7 +133,7 @@ class CasbahCrudSpec extends Specification with ResultMatchers {
     }
 
     "update documents" in {
-      "using document replacement" in {//this is useful if you serialized the object
+      "using document replacement" in {//this is useful if you serialized the object and want do put the full object to the database
         runningMongoApp {
           withUserCollection {
             users =>
@@ -149,17 +151,43 @@ class CasbahCrudSpec extends Specification with ResultMatchers {
         }
       }
 
-      "using $set" in {
+      "using $set to update only some fields" in {
           runningMongoApp {
             withUserCollection {
               users =>
                 val newEmail = 42
-                users.update(queryMax(), $set ("email" -> newEmail) ) //query can change type #email
+                users.update(queryMax(), $set ("email" -> newEmail /* here could be more tuples*/) ) //query can change type #email
                 val max = users.findOne(queryMax()).get
                 max.getAs[String]("lastname") must beSome(maxLastname) //lastname not changed or empty
                 max.getAs[Int]("email") must beSome(newEmail)
             }
           }
+      }
+
+      "using $unset removes an attribute" in {
+        runningMongoApp {
+          withUserCollection {
+            users =>
+              users.update(queryMax(), $unset ("email") )
+              val max = users.findOne(queryMax()).get
+              max.getAs[Int]("email") must beNone
+          }
+        }
+      }
+
+      "using $inc is a fast version for number=number+x" in {//useful for counter
+        runningMongoApp {
+          withUserCollection {
+            users =>
+              val newScoreAsAbsoluteValue = 50
+              users.update(queryMax(), $inc("score" -> newScoreAsAbsoluteValue) )
+              users.update(queryMichael(), $inc("score" -> newScoreAsAbsoluteValue) )
+              val max = users.findOne(queryMax()).get
+              max.getAs[Int]("score") must beSome(initialScoreMax + newScoreAsAbsoluteValue)
+              val michael = users.findOne(queryMichael()).get
+              michael.getAs[Int]("score") must beSome(0 + newScoreAsAbsoluteValue)//creates field with initial value 0
+          }
+        }
       }
     }
   }
@@ -170,9 +198,10 @@ class CasbahCrudSpec extends Specification with ResultMatchers {
 
   def queryMichael() = MongoDBObject("firstname" -> "Michael", "lastname" -> "Schleichardt")
 
-  def fullQueryMax() = MongoDBObject("firstname" -> "Max", "lastname" -> maxLastname, "email" -> "max@localhost")
+  def fullQueryMax() = MongoDBObject("firstname" -> "Max", "lastname" -> maxLastname, "email" -> "max@localhost", "score" -> initialScoreMax)
 
   def queryMax() = MongoDBObject("firstname" -> "Max")
+  val initialScoreMax = 25
 
   def emptyTestCollection()(implicit app: Application): MongoCollection = {
     val collection = salatPlugin.collection("collection_for_tests" + UUID.randomUUID().toString)

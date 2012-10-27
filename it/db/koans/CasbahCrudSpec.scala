@@ -178,19 +178,75 @@ class CasbahCrudSpec extends Specification with ResultMatchers {
       "using $inc is a fast version for number=number+x" in {//useful for counter
         runningMongoApp {
           withUserCollection {
-            users =>
+            implicit users =>
               val newScoreAsAbsoluteValue = 50
               users.update(queryMax(), $inc("score" -> newScoreAsAbsoluteValue) )
               users.update(queryMichael(), $inc("score" -> newScoreAsAbsoluteValue) )
               val max = users.findOne(queryMax()).get
               max.getAs[Int]("score") must beSome(initialScoreMax + newScoreAsAbsoluteValue)
-              val michael = users.findOne(queryMichael()).get
+              val michael = obtainMichael()
               michael.getAs[Int]("score") must beSome(0 + newScoreAsAbsoluteValue)//creates field with initial value 0
+          }
+        }
+      }
+
+      "using $push to add an element at the end of an array" in {
+        runningMongoApp {
+          withUserCollection {
+            implicit users =>
+              users.update(queryMichael(), $push("comments" -> "test subject"))
+              users.update(queryMichael(), $push("comments" -> "second comment"))
+              obtainMichael().as[MongoDBList]("comments").size === 2
+              obtainMichaelComments.apply(1) === "second comment"//be careful in lists it could be mixed type, AnyRef
+          }
+        }
+        /*
+        if there should not be duplicates. you can query like that:
+        {"comments": {"$ne" : "test subject"}}
+         */
+      }
+
+      "using $addToSet to prevent duplicate entries" in {
+        runningMongoApp {
+          withUserCollection {
+            implicit users =>
+              users.update(queryMichael(), $push("comments" -> "test subject"))
+              users.update(queryMichael(), $addToSet("comments" -> "test subject"))
+              users.update(queryMichael(), $addToSet("comments" -> "test subject"))
+              users.update(queryMichael(), $addToSet("comments" -> "second comment"))
+              users.update(queryMichael(), $addToSet("comments" -> "test subject"))
+              users.update(queryMichael(), $addToSet("comments" -> "test subject"))
+              obtainMichael().as[MongoDBList]("comments").size === 2
+              obtainMichaelComments.apply(1) === "second comment"
+          }
+        }
+      }
+
+      "using $addToSet with $each for multi-value updates" in {
+        runningMongoApp {
+          withUserCollection {
+            implicit users =>
+              users.update(queryMichael(), $push("comments" -> "test subject"))
+              users.update(queryMichael(), $push("comments" -> "bla bla"))
+              users.update(queryMichael(), $push("comments" -> "second comment"))
+              obtainMichaelComments.size === 3
+              users.update(queryMichael(), $addToSet("comments") $each("test subject", "only this should be added", "bla bla", "second comment"))
+              obtainMichaelComments.size === 4
+              obtainMichaelComments.apply(3) === "only this should be added"
           }
         }
       }
     }
   }
+
+
+  def obtainMichaelComments()(implicit users: MongoCollection): Seq[String] = {
+    obtainMichael().as[MongoDBList]("comments").collect {
+      case s: String => s
+    }
+  }
+
+  def obtainMichael()(implicit users: MongoCollection): MongoDBObject = users.findOne(queryMichael()).get
 
   val maxLastname = "Mustermann"
 
@@ -220,7 +276,7 @@ class CasbahCrudSpec extends Specification with ResultMatchers {
   }
 
   def withUserCollection(block: MongoCollection => Result)(implicit app: Application): Result = {
-    val collection = emptyTestCollection()
+    implicit val collection = emptyTestCollection()
     collection += queryMichael
     collection += fullQueryMax
     collection += MongoDBObject("firstname" -> "Julia", "lastname" -> "Musterfrau", "email" -> "julia@localhost")

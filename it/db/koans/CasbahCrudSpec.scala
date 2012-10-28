@@ -277,6 +277,19 @@ class CasbahCrudSpec extends Specification with ResultMatchers {
           }
         }
       }
+
+      "using positional array modifications" in {
+        runningMongoApp {
+          def entry(number: Int) = MongoDBObject("number" -> number, "other" -> "other value")
+
+          withUserCollection {
+            implicit users =>
+              users.update(queryMichael(), $addToSet("subarrays") $each(entry(0),entry(1),entry(2)))
+              users.update(queryMichael(), $inc("subarrays.1.number" -> 13))
+              obtainMichael().as[MongoDBList]("subarrays").getAs[BasicDBObject](1).get.getAs[Int]("number") === Some(14)
+          }
+        }
+      }
     }
   }
 

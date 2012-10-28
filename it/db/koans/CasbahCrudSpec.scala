@@ -236,9 +236,54 @@ class CasbahCrudSpec extends Specification with ResultMatchers {
           }
         }
       }
+
+      "using $pop to remove an array element at start or end" in {
+        runningMongoApp {
+          withUserCollection {
+            implicit users =>
+              add4CommentsToMichael()
+              obtainMichaelComments.size === 4
+              users.update(queryMichael(), $pop("comments" -> 1)) //last
+              obtainMichaelComments.size === 3
+              obtainMichaelComments.apply(0) === "a"
+              obtainMichaelComments.apply(2) === "c"
+              users.update(queryMichael(), $pop("comments" -> -1)) //first
+              obtainMichaelComments.size === 2
+              obtainMichaelComments.apply(0) === "b"
+          }
+        }
+      }
+
+      "using $pull to remove specific elements in an array" in {
+        runningMongoApp {
+          withUserCollection {
+            implicit users =>
+              add4CommentsToMichael()
+              users.update(queryMichael(), $pull("comments" -> "c"))
+              obtainMichaelComments.size === 3
+              obtainMichaelComments must contain("a", "b", "d").inOrder
+          }
+        }
+      }
+
+      "using $pull to remove not existing element gives no warning" in {
+        runningMongoApp {
+          withUserCollection {
+            implicit users =>
+              add4CommentsToMichael()
+              users.update(queryMichael(), $pull("comments" -> "not there"))
+              obtainMichaelComments.size === 4
+              obtainMichaelComments must contain("a", "b", "c", "d").inOrder
+          }
+        }
+      }
     }
   }
 
+
+  def add4CommentsToMichael()(implicit users: MongoCollection): WriteResult = {
+    users.update(queryMichael(), $addToSet("comments") $each("a", "b", "c", "d"))
+  }
 
   def obtainMichaelComments()(implicit users: MongoCollection): Seq[String] = {
     obtainMichael().as[MongoDBList]("comments").collect {

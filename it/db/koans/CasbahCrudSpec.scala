@@ -137,16 +137,16 @@ class CasbahCrudSpec extends Specification with ResultMatchers {
         runningMongoApp {
           withUserCollection {
             users =>
-              val newNameCriteria = MongoDBObject("firstname" -> "NewName")
+              val entireNewDocument = MongoDBObject("firstname" -> "NewName")
               users.find(queryMax).size === 1
-              users.find(newNameCriteria).size === 0
+              users.find(entireNewDocument).size === 0
 
               val selectStatement = queryMax
-              val updateStatement = newNameCriteria
+              val updateStatement = entireNewDocument
               users.update(selectStatement, updateStatement )
               users.find(queryMax).size === 0
-              users.find(newNameCriteria).size === 1
-              users.findOne(newNameCriteria).get.getAs[String]("email") === None //overriding may causes data loss
+              users.find(entireNewDocument).size === 1
+              users.findOne(entireNewDocument).get.getAs[String]("email") === None //overriding may causes data loss
           }
         }
       }

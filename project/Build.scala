@@ -21,6 +21,11 @@ object ApplicationBuild extends Build {
     libraryDependencies += "play" %% "play-test" % play.core.PlayVersion.current % "it"
     , scalaSource in IntegrationTest <<= baseDirectory / "it"
     , javaSource in IntegrationTest <<= baseDirectory / "it"
-    , sourceDirectory in IntegrationTest <<= baseDirectory / "it"
+    , sourceDirectory in IntegrationTest <<= baseDirectory / "it",
+    logBuffered in Test := false,
+    logBuffered in IntegrationTest := false,
+    parallelExecution in Test := false,
+    parallelExecution in IntegrationTest := false,
+    testOptions in IntegrationTest += Tests.Argument("sequential", "true")
   )
 }

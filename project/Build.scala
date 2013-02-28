@@ -9,6 +9,7 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     "org.reactivemongo" %% "reactivemongo" % "0.9-SNAPSHOT"
+    , "junit" % "junit-dep" % "4.11"
   )
 
 

@@ -44,3 +44,4 @@ tmp
 *.tmp
 *.war
 worker*.log
+!sbtwrapper/sbt-launch.jar

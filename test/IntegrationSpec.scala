@@ -19,7 +19,7 @@ class IntegrationSpec extends Specification {
       val db = connection("plugin")
       val collection = db("acoll")
       val cursor = collection.find(BSONDocument())
-      Await.result(cursor.toList, Duration("1 second")).size === 0
+      Await.result(cursor.toList, Duration("2 seconds")).size === 0
       connection.close()
     }
   }

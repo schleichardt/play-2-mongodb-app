@@ -20,6 +20,7 @@ object ApplicationBuild extends Build {
   lazy val jacocoSettings = jacoco.settings ++ Seq(
     parallelExecution in jacoco.Config := false
     , jacoco.excludes in jacoco.Config ~= { _ ++ Seq("**.ref.**", "**.Reverse*", "views.html.**", "Routes*", "controllers.routes**") }
+    , testOptions in jacoco.Config += Tests.Argument("junitxml", "console")
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

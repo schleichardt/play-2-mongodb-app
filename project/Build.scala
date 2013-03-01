@@ -18,6 +18,7 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers += Resolver.sonatypeRepo("snapshots")
+    , testOptions in Test += Tests.Argument("junitxml", "console")
   ).settings(jacoco.settings : _*).settings(
     parallelExecution in jacoco.Config := false
     , jacoco.excludes in jacoco.Config ~= { _ ++ Seq("**.ref.**", "**.Reverse*", "views.**", "Routes*", "controllers.routes**") }

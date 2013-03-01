@@ -1,6 +1,8 @@
 import sbt._
 import Keys._
 import play.Project._
+import de.johoop.jacoco4sbt._
+import JacocoPlugin._
 
 object ApplicationBuild extends Build {
 
@@ -16,6 +18,8 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers += Resolver.sonatypeRepo("snapshots")
+  ).settings(jacoco.settings : _*).settings(
+    parallelExecution in jacoco.Config := false
   )
 
 }

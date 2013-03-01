@@ -20,6 +20,7 @@ object ApplicationBuild extends Build {
     resolvers += Resolver.sonatypeRepo("snapshots")
   ).settings(jacoco.settings : _*).settings(
     parallelExecution in jacoco.Config := false
+    , jacoco.excludes in jacoco.Config ~= { _ ++ Seq("**.ref.**", "**.Reverse*", "views.**", "Routes*", "controllers.routes**") }
   )
 
 }

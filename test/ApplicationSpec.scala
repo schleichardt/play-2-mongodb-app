@@ -5,6 +5,8 @@ import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
 import org.specs2.execute.Pending
+import models.{PostDAO, MockPostDAO}
+import play.api.mvc.{Controller, AnyContent, Action, Result}
 
 /**
  * Add your spec here.
@@ -27,9 +29,19 @@ class ApplicationSpec extends Specification {
   }
 }
 
+object TestUtil {
+  object ApplicationController extends Controller with controllers.Application {
+      val postDAO = MockPostDAO
+    }
+}
+
+import TestUtil._
+
 class StartPageSpec extends Specification {
   "The start page" should {
-    "show the teasers of the 10 most recent blog posts" in {
+    "show the teasers of the 10 most recent blog posts" in new WithApplication {
+      val result: Result = ApplicationController.index()(FakeRequest())
+      contentAsString(result) must contain("Title 1 Mock")
       Pending
     }
 

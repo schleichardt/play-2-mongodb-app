@@ -1,5 +1,9 @@
-@(message: String)
+@(posts: Seq[Post])
 
-@main("Welcome to Play 2.1") {
-
+@main("Welcome") {
+    <ol>
+        @for(post <- posts) {
+            <li>@post.title | @post.content</li>
+        }
+    </ol>
 }

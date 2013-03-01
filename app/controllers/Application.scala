@@ -2,11 +2,21 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import models.PostDAO
+import concurrent.ExecutionContext.Implicits.global
 
-object Application extends Controller {
-  
+trait Application {
+  this: Controller =>
+
+  val postDAO: PostDAO
+
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Async {
+      postDAO.obtain().map(posts => Ok(views.html.index(posts)))
+    }
   }
-  
+}
+
+object Application extends Controller with Application {
+  val postDAO = PostDAO
 }

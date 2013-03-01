@@ -15,13 +15,13 @@ object ApplicationBuild extends Build {
     , "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.28"
   )
 
-
-  val main = play.Project(appName, appVersion, appDependencies).settings(
-    resolvers += Resolver.sonatypeRepo("snapshots")
-    , testOptions in Test += Tests.Argument("junitxml", "console")
-  ).settings(jacoco.settings : _*).settings(
+  lazy val jacocoSettings = jacoco.settings ++ Seq(
     parallelExecution in jacoco.Config := false
     , jacoco.excludes in jacoco.Config ~= { _ ++ Seq("**.ref.**", "**.Reverse*", "views.**", "Routes*", "controllers.routes**") }
   )
 
+  val main = play.Project(appName, appVersion, appDependencies).settings(
+    resolvers += Resolver.sonatypeRepo("snapshots")
+    , testOptions in Test += Tests.Argument("junitxml", "console")
+  ).settings(jacocoSettings : _*)
 }

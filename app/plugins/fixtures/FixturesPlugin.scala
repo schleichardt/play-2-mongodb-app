@@ -9,6 +9,9 @@ import play.modules.reactivemongo._
 import play.modules.reactivemongo.PlayBsonImplicits._
 import concurrent.ExecutionContext.Implicits.global
 import play.api.libs.iteratee.Enumerator
+import concurrent.Future
+import concurrent.duration.Duration
+import scala.concurrent.Await
 
 class FixturesPlugin(app: Application) extends Plugin {
   override def enabled = filesOption.isDefined && !filesOption.get.isEmpty
@@ -35,9 +38,11 @@ class FixturesPlugin(app: Application) extends Plugin {
     Logger.info(s"filling collection $collectionName")
     val collection = ReactiveMongoPlugin.db(app)(collectionName)
     //@TODO batch processing possible?
-    array.value foreach { document =>
-      collection.insert(document)
+    val allInserts = array.value map {
+      document =>
+        collection.insert(document)
     }
+    Await.ready(Future.sequence(allInserts), Duration("2 seconds"))
   }
 
   private def filesOption = app.configuration.getStringList("fixtures.files")

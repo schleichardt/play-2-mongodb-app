@@ -42,7 +42,7 @@ class FixturesPlugin(app: Application) extends Plugin {
       document =>
         collection.insert(document)
     }
-    Await.ready(Future.sequence(allInserts), Duration("2 seconds"))
+    Await.ready(Future.sequence(allInserts), Duration("5 seconds"))
   }
 
   private def filesOption = app.configuration.getStringList("fixtures.files")

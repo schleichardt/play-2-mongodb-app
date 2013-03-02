@@ -8,5 +8,5 @@ trait PostDAO {
 }
 
 object PostDAO extends PostDAO {
-  def obtain() = Future(Seq(Post("Title 1", "Content 1"), Post("Title 2", "Content 2")))
+  def obtain() = Future(Seq())
 }

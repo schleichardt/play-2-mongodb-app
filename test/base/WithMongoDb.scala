@@ -47,13 +47,16 @@ abstract class WithMongoDb(val version: IVersion = Version.Main.V2_2,
     }
   }
   private lazy val connection = MongoConnection(List(s"localhost:$mongoDbPort"))
-  lazy val db = connection("test")
+  lazy val db = connection(dbName)
+  def dbName = "test"
 }
 
 abstract class WithMongoDbApplication(val application: FakeApplication = FakeApplication(), val mongo: WithMongoDb = new WithMongoDb() {}) extends Around with Scope {
 
   lazy val usedApplication = {
-    val additionalConfiguration = Map("mongodb.servers" -> List( """localhost:%d""".format(mongo.mongoDbPort)).asJava, "mongodb.db" -> "test")
+    val hostAndPort = "mongodb.servers" -> List( """localhost:%d""".format(mongo.mongoDbPort)).asJava
+    val dbName = "mongodb.db" -> mongo.dbName
+    val additionalConfiguration = Map(hostAndPort, dbName)
     application.copy(additionalConfiguration = additionalConfiguration)
   }
 

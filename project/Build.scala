@@ -27,5 +27,6 @@ object ApplicationBuild extends Build {
   val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers += Resolver.sonatypeRepo("snapshots")
     , testOptions in Test += Tests.Argument("junitxml", "console")
+    , logBuffered in Test := false
   ).settings(jacocoSettings : _*)
 }

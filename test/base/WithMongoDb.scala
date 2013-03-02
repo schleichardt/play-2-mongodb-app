@@ -61,6 +61,6 @@ abstract class WithMongoDbApplication(val application: FakeApplication = FakeApp
   }
 
   override def around[T: AsResult](t: => T): Result = {
-    mongo andThen (new WithApplication(usedApplication){}) around({println("around!!!!!!!");t})
+    mongo andThen (new WithApplication(usedApplication){}) around(t})
   }
 }

@@ -2,13 +2,14 @@ package plugins.embedmongo
 
 import de.flapdoodle.embed.mongo.{MongodProcess, MongodExecutable, MongodStarter}
 import play.api.{Logger, Plugin, Application}
-import de.flapdoodle.embed.mongo.config.MongodConfig
+import de.flapdoodle.embed.mongo.config.{RuntimeConfig, MongodConfig}
 import de.flapdoodle.embed.process.runtime.Network
 import de.flapdoodle.embed.process.distribution.GenericVersion
+import java.util.logging.{Logger => JLogger}
 
 /** provides a MongoDB instance for development and testing
   * Hast to be loaded before any other MongoDB related plugin.
-  **/
+  * */
 class EmbedMongoPlugin(app: Application) extends Plugin {
   private var mongoExe: MongodExecutable = _
   private var process: MongodProcess = _
@@ -17,7 +18,8 @@ class EmbedMongoPlugin(app: Application) extends Plugin {
 
   override def onStart() {
     super.onStart()
-    val runtime = MongodStarter.getDefaultInstance()
+    val runtimeConfig = RuntimeConfig.getInstance(JLogger.getLogger("embedmongo"));
+    val runtime = MongodStarter.getInstance(runtimeConfig);
     val versionNumber = app.configuration.getString("embedmongo.dbversion").get
     val version = new GenericVersion(versionNumber)
     val port = app.configuration.getInt("embedmongo.port").get //todo maybe port can be auto generated, use Global object

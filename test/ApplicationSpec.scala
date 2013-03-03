@@ -1,5 +1,3 @@
-package test
-
 import org.specs2.mutable._
 
 import play.api.test._
@@ -40,9 +38,12 @@ import TestUtil._
 class StartPageSpec extends Specification {
   "The start page" should {
     "show the teasers of the 10 most recent blog posts" in new WithApplication {
-      val result: Result = ApplicationController.index()(FakeRequest())
-      contentAsString(result) must contain("Title 1 Mock")
-      Pending
+      val result: Result = controllers.Application.index()(FakeRequest())
+      val content = contentAsString(result)
+      for (i <- 5 to 14) {
+        content must contain(s"title $i")
+      }
+      content must not contain("title 4")
     }
 
     "makes older posts paginated available" in {

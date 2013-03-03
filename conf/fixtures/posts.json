@@ -1,3 +1,16 @@
-[{ "_id" : "element1", "title": "title 1", "content" : "content 1" },
-{ "title": "title 2", "content" : "content 2" },
-{ "title": "title 3", "content" : "content 3" }]
+[
+    { "_id" : "element1", "title": "title 1", "content" : "content 1", "published_at" :  { "$date" : 1353387915229 }},
+    { "_id" : "element2", "title": "title 2", "content" : "content 2", "published_at" :  { "$date" : 1353387915230 }},
+    { "_id" : "element3", "title": "title 3", "content" : "content 3", "published_at" :  { "$date" : 1353387915231 }},
+    { "_id" : "element4", "title": "title 4", "content" : "content 4", "published_at" :  { "$date" : 1353387915232 }},
+    { "_id" : "element5", "title": "title 5", "content" : "content 5", "published_at" :  { "$date" : 1353387915233 }},
+    { "_id" : "element6", "title": "title 6", "content" : "content 6", "published_at" :  { "$date" : 1353387915234 }},
+    { "_id" : "element7", "title": "title 7", "content" : "content 7", "published_at" :  { "$date" : 1353387915235 }},
+    { "_id" : "element8", "title": "title 8", "content" : "content 8", "published_at" :  { "$date" : 1353387915236 }},
+    { "_id" : "element9", "title": "title 9", "content" : "content 9", "published_at" :  { "$date" : 1353387915237 }},
+    { "_id" : "element10", "title": "title 10", "content" : "content 10", "published_at" :  { "$date" : 1353387915238 }},
+    { "_id" : "element11", "title": "title 11", "content" : "content 11", "published_at" :  { "$date" : 1353387915239 }},
+    { "_id" : "element12", "title": "title 12", "content" : "content 12", "published_at" :  { "$date" : 1353387915240 }},
+    { "_id" : "element13", "title": "title 13", "content" : "content 13", "published_at" :  { "$date" : 1353387915241 }},
+    { "_id" : "element14", "title": "title 14", "content" : "content 14", "published_at" :  { "$date" : 1353387915242 }}
+]

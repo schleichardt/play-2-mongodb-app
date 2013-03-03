@@ -13,7 +13,7 @@ object ApplicationBuild extends Build {
     "org.reactivemongo" %% "reactivemongo" % "0.9-SNAPSHOT"
     , "org.reactivemongo" %% "play2-reactivemongo" % "0.9-SNAPSHOT"
     , "junit" % "junit-dep" % "4.11" % "test"
-    , "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.28" % "test"
+    , "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.28"
     , "org.webjars" % "webjars-play" % "2.1.0"
     , "org.webjars" % "bootstrap" % "2.3.0"
   )

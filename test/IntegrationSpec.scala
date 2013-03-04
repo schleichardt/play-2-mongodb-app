@@ -13,10 +13,9 @@ import reactivemongo.bson._
 import play.modules.reactivemongo._
 import play.modules.reactivemongo.PlayBsonImplicits._
 import play.api.test.WithApplication
+import test.TestUtil._
 
 class IntegrationSpec extends Specification {
-  def await[T](awaitable: Awaitable[T]) = Await.result(awaitable, Duration("10 seconds"))
-
   "Application" should {
     "be able to connect with MongoDB" in new WithApplication {
       val dbx = ReactiveMongoPlugin.db

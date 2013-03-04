@@ -15,7 +15,7 @@ object ApplicationBuild extends Build {
     , "junit" % "junit-dep" % "4.11" % "test"
     , "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.28"
     , "org.webjars" % "webjars-play" % "2.1.0"
-    , "org.webjars" % "bootstrap" % "2.3.0"
+    , "org.webjars" % "bootstrap" % "2.2.2-1" //2.3.0 and 2.3.1 freeze the tests
   )
 
   lazy val jacocoSettings = jacoco.settings ++ Seq(

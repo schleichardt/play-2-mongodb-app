@@ -1,3 +1,3 @@
 package models
 
-case class Post(title: String, content: String)
+case class Post(id: String, title: String, content: String)

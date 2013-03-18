@@ -15,6 +15,7 @@ trait Application {
 
   val postForm = Form(
     mapping(
+      "id" -> text,
       "title" -> text.verifying(nonEmpty, minLength(5)),
       "content" -> text.verifying(nonEmpty, minLength(5))
     )(Post.apply)(Post.unapply)
@@ -27,14 +28,14 @@ trait Application {
   }
 
   def showCreatePostForm = Action { implicit request =>
-    Ok(views.html.editPost(postForm))
+    Ok(views.html.editPost(postForm, None))
   }
 
   def addPost = Action { implicit request =>
     val filledForm = postForm.bindFromRequest
     filledForm.fold(
       formWithErrors =>
-        BadRequest(views.html.editPost(formWithErrors)),
+        BadRequest(views.html.editPost(formWithErrors, None)),
       value =>
         Redirect(routes.Application.index()).flashing("success" -> "Post successfully created.") //TODO go to edit page of post
     )

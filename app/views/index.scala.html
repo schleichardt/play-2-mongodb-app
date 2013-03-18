@@ -3,7 +3,7 @@
 @main("Welcome") {
     <ol>
         @for(post <- posts) {
-            <li>@post.title | @post.content</li>
+            <li><a href="@routes.PostsController.show(post.id)">@post.title</a> | @post.content</li>
         }
     </ol>
 

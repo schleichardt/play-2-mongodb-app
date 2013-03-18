@@ -13,6 +13,12 @@ import scala.collection.JavaConversions._
 import concurrent.{Await, Awaitable}
 import concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
+import play.api.test.Helpers.route
+import play.api.test.Helpers.writeableOf_AnyContentAsFormUrlEncoded
+import play.api.test.Helpers.status
+import play.api.test.Helpers.CREATED
+import play.api.test.Helpers.OK
+import play.api.test.Helpers.SEE_OTHER
 
 /**
  * Add your spec here.
@@ -48,7 +54,7 @@ object TestUtil {
     def apply(webDriver: WebDriver) = f
   }
 
-  def await[T](awaitable: Awaitable[T]) = Await.result(awaitable, Duration("10 seconds"))
+  def await[T](awaitable: Awaitable[T]) = Await.result(awaitable, Duration("12 seconds"))
 }
 
 import TestUtil._
@@ -87,6 +93,21 @@ class PostPageSpec extends Specification {
     "enable a user to make a comment" in {
       Pending
     }
+
+    "enable a user to change a post" in new WithApplication {
+      val newTitle = "new title of 6"
+      val newContent = "content update"
+      val id = "element6"
+      var request = { FakeRequest("POST", controllers.routes.PostsController.save(id).url).withFormUrlEncodedBody("id" -> id, "title" -> newTitle, "content" -> newContent)}
+      val result = route(request).get
+      status(result) must be equalTo(SEE_OTHER)
+      val changedPostOption = await(PostDAO.byId("element6"))
+      changedPostOption must beSome
+      val changedPost: Post = changedPostOption.get
+      changedPost.title must be equalTo(newTitle)
+      changedPost.content must be equalTo(newContent)
+      Pending
+    }
   }
 }
 
@@ -96,7 +117,7 @@ class NewPostPageSpec extends Specification {
       val pathFormPage = controllers.routes.Application.showCreatePostForm.url
       val url = s"http://localhost:$port%s".format(pathFormPage)
       browser.goTo(url)
-      val postTemplate = Post("the new title", "the new content")
+      val postTemplate = Post("", "the new title", "the new content")
       browser.fill("#edit-post-title").`with`(postTemplate.title)
       browser.fill("#edit-content").`with`(postTemplate.content)
       browser.$("#edit-post-submit").click()

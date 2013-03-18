@@ -29,5 +29,6 @@ object ApplicationBuild extends Build {
     , testOptions in Test += Tests.Argument("junitxml", "console")
     , logBuffered in Test := false
     , templatesImport ~= {current => current ++ Seq("views.TemplateUtil._")}
+    , parallelExecution in Test := false
   ).settings(jacocoSettings : _*)
 }

@@ -28,5 +28,6 @@ object ApplicationBuild extends Build {
     resolvers += Resolver.sonatypeRepo("snapshots")
     , testOptions in Test += Tests.Argument("junitxml", "console")
     , logBuffered in Test := false
+    , templatesImport ~= {current => current ++ Seq("views.TemplateUtil._")}
   ).settings(jacocoSettings : _*)
 }

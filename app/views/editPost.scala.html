@@ -1,14 +1,9 @@
 @(postForm: Form[Post])(implicit flash: Flash)
 
-@import helper.twitterBootstrap._
-
 @main("Add a post") {
-
-    @flash.get("success").getOrElse("nicht da in edit")
-
     @helper.form(action = routes.Application.addPost, 'id -> "post-form") {
-        @helper.inputText(postForm("title"), 'id -> "edit-post-title")
-        @helper.textarea(postForm("content"), 'id -> "edit-post-content")
+        @helper.inputText(postForm("title"), 'id -> "edit-post-title", 'class -> "input-xlarge")
+        @helper.textarea(postForm("content"), 'id -> "edit-post-content", 'class -> "input-xlarge", 'rows -> "10")
         <button type="submit" class="btn" id="edit-post-submit">Submit</button>
     }
 }

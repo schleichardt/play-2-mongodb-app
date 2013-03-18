@@ -22,7 +22,7 @@ class EmbedMongoPlugin(app: Application) extends Plugin {
     val runtime = MongodStarter.getInstance(runtimeConfig);
     val versionNumber = app.configuration.getString("embedmongo.dbversion").get
     val version = new GenericVersion(versionNumber)
-    val port = app.configuration.getInt("embedmongo.port").get //todo maybe port can be auto generated, use Global object
+    val port = app.configuration.getInt("embedmongo.port").get
     mongoExe = runtime.prepare(new MongodConfig(version, port, Network.localhostIsIPv6()))
     process = mongoExe.start()
     Logger.info(s"started embedmongo on port $port")
@@ -38,4 +38,8 @@ class EmbedMongoPlugin(app: Application) extends Plugin {
         process.stop()
     }
   }
+}
+
+object EmbedMongoPlugin {
+  def freePort() = Network.getFreeServerPort
 }

@@ -4,8 +4,8 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /create-post                controllers.Application.showCreatePostForm
-POST    /create-post                controllers.Application.addPost
+GET     /post/new                   controllers.Application.showCreatePostForm
+POST    /post/new                   controllers.Application.addPost
 
 GET     /assets/webjars/*file       controllers.WebJarAssets.at(file)
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

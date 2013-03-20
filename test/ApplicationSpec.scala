@@ -66,7 +66,7 @@ class StartPageSpec extends Specification {
       val content = contentAsString(result)
       for (i <- 5 to 14) {
         content must contain(s"title $i")
-      }
+    }
       content must not contain("title 4")
     }
 
@@ -104,9 +104,8 @@ class PostPageSpec extends Specification {
       val changedPostOption = await(PostDAO.byId("element6"))
       changedPostOption must beSome
       val changedPost: Post = changedPostOption.get
-      changedPost.title must be equalTo(newTitle)
-      changedPost.content must be equalTo(newContent)
-      Pending
+      changedPost.title must be equalTo (newTitle)
+      changedPost.content must be equalTo (newContent)
     }
   }
 }

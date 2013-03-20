@@ -12,14 +12,14 @@ object PostsController extends Controller {
   def save(id: String) = Action {
     implicit request =>
       Application.postForm.bindFromRequest().fold(
-      form => BadRequest(views.html.editPost(form, Option(id))),
-      post => AsyncResult {
+        form => BadRequest(views.html.editPost(form, Option(id))),
+        post => AsyncResult {
           import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
           import scala.concurrent.ExecutionContext.Implicits.global
           val modifier = BSONDocument("$set" -> BSONDocument("title" -> BSONString(post.title), "content" -> BSONString(post.content)))
           //TODO code to PostDAO
           val query = BSONDocument("_id" -> BSONString(id))
-          PostDAO.collection.update(query, modifier, multi = true).map { _ =>
+          PostDAO.collection.update(query, modifier).map { _ =>
             Redirect(routes.PostsController.show(id))
           }
         }

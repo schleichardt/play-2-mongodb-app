@@ -24,8 +24,8 @@ trait PostDAO {
 }
 
 object PostDAO extends PostDAO {
-  val db = ReactiveMongoPlugin.db
-  lazy val collection = db("posts")
+  def db = ReactiveMongoPlugin.db
+  def collection = db("posts")
   implicit val postFormat = (
     (__ \ "_id").format[String] and
       (__ \ "title").format[String] and

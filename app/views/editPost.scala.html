@@ -6,7 +6,7 @@
         <input type="hidden" name="id" value="@postForm("id").value.getOrElse("")">
         @helper.inputText(postForm("title"), 'id -> "edit-post-title", 'class -> "input-xlarge")
         @helper.textarea(postForm("content"), 'id -> "edit-post-content", 'class -> "input-xlarge", 'rows -> "10")
-        <button type="submit" class="btn" id="edit-post-submit">Submit</button>
+        <button type="submit" class="btn btn-primary" id="edit-post-submit">Save</button>
     }
 
     <h4>Comments</h4>

@@ -6,7 +6,7 @@ import play.api.test._
 import play.api.test.Helpers.contentAsString
 import org.specs2.execute.Pending
 import models.{Post, PostDAO, MockPostDAO}
-import play.api.mvc.{Controller, AnyContent, Action, Result}
+import play.api.mvc._
 import org.openqa.selenium.WebDriver
 import com.google.common.base.Predicate
 import scala.collection.JavaConversions._
@@ -22,7 +22,12 @@ import play.api.test.Helpers.POST
 import play.api.test.Helpers.GET
 import play.api.test.Helpers.writeableOf_AnyContentAsEmpty
 import play.api.test.Helpers.SEE_OTHER
+import play.api.test.Helpers.headers
+import play.api.test.Helpers.cookies
+import play.api.test.Helpers.redirectLocation
 import org.joda.time.DateTime
+import org.specs2.execute.Pending
+import models.Post
 
 /**
  * Add your spec here.
@@ -119,8 +124,11 @@ class PostPageSpec extends Specification {
       val newContent = "content update"
       val id = "element6"
       var request = { FakeRequest(POST, controllers.routes.PostsController.save(id).url).withFormUrlEncodedBody("id" -> id, "title" -> newTitle, "content" -> newContent)}
-      val result = route(request).get
-      status(result) must be equalTo(SEE_OTHER)
+      val redirectResult = route(request).get
+      status(redirectResult) must be equalTo(SEE_OTHER)
+      cookies(redirectResult).get("PLAY_FLASH").map(_.value.contains("success")) must beSome(true)
+
+      val result = route(FakeRequest(GET, redirectLocation(redirectResult).get)).get
       val changedPostOption = await(PostDAO.byId("element6"))
       changedPostOption must beSome
       val changedPost: Post = changedPostOption.get

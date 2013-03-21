@@ -20,7 +20,7 @@ object PostsController extends Controller {
           //TODO code to PostDAO
           val query = BSONDocument("_id" -> BSONString(id))
           PostDAO.collection.update(query, modifier).map { _ =>
-            Redirect(routes.PostsController.show(id))
+            Redirect(routes.PostsController.show(id)).flashing("success" -> s"Post ${post.title} successfully saved.")
           }
         }
       )

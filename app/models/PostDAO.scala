@@ -26,11 +26,16 @@ trait PostDAO {
 object PostDAO extends PostDAO {
   def db = ReactiveMongoPlugin.db
   def collection = db("posts")
-  implicit val postFormat = (
-    (__ \ "_id").format[String] and
-      (__ \ "title").format[String] and
-      (__ \ "content").format[String]
-    )(Post.apply, unlift(Post.unapply))
+
+  implicit val postFormat = {
+    def deserializer(id:String, title:String, content:String) = Post(id, title, content)
+    def serializer(post: Post) = Post.unapply(post).map(item => (item._1, item._2, item._3)).get
+    (
+      (__ \ "_id").format[String] and
+        (__ \ "title").format[String] and
+        (__ \ "content").format[String]
+      )(deserializer, serializer)
+  }
 
   override def obtain(limit: Int) = {
     import play.modules.reactivemongo.PlayBsonImplicits._

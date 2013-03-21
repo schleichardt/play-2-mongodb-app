@@ -2,7 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import models.{Post, PostDAO}
+import models.{Comment, Post, PostDAO}
 import concurrent.ExecutionContext.Implicits.global
 import play.api.data._
 import play.api.data.Forms._
@@ -17,7 +17,8 @@ trait Application {
     mapping(
       "id" -> text,
       "title" -> text.verifying(nonEmpty, minLength(5)),
-      "content" -> text.verifying(nonEmpty, minLength(5))
+      "content" -> text.verifying(nonEmpty, minLength(5)),
+      "comments" -> ignored(List[Comment]())
     )(Post.apply)(Post.unapply)
   )
 

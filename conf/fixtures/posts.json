@@ -12,5 +12,24 @@
     { "_id" : "element11", "title": "title 11", "content" : "content 11", "published_at" :  { "$date" : 1353387915239 }},
     { "_id" : "element12", "title": "title 12", "content" : "content 12", "published_at" :  { "$date" : 1353387915240 }},
     { "_id" : "element13", "title": "title 13", "content" : "content 13", "published_at" :  { "$date" : 1353387915241 }},
-    { "_id" : "element14", "title": "title 14", "content" : "content 14", "published_at" :  { "$date" : 1353387915242 }}
+    {
+        "_id" : "element14",
+        "title": "title 14",
+        "content" : "content 14",
+        "published_at" : { "$date" : 1353387915242 },
+        "comments" : [
+            {
+                "author": "Bernd",
+                "email" : "bernd@domain.tld",
+                "content" : "good page",
+                "published_at" : { "$date" : 1353387915242 }
+            },
+            {
+                "author": "Frank Stallone",
+                "email" : "frank@domain.tld",
+                "content" : "bad page",
+                "published_at" : { "$date" : 1353387915242 }
+            }
+        ]
+    }
 ]

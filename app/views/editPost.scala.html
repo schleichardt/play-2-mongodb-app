@@ -1,4 +1,4 @@
-@(postForm: Form[Post], postOption: Option[Post] = None)(implicit flash: Flash)
+@(postForm: Form[Post], postOption: Option[Post] = None)(implicit flash: Flash, request: play.api.mvc.Request[_])
 
 @main("Add a post") {
     @helper.form(action = postOption.map(post => routes.PostsController.save(post.id)).getOrElse(routes.Application.addPost()), 'id -> "post-form") {

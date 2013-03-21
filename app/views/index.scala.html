@@ -1,4 +1,4 @@
-@(posts: Seq[Post])(implicit flash: Flash)
+@(posts: Seq[Post])(implicit flash: Flash, request: play.api.mvc.Request[_])
 
 @main("Welcome") {
     <ol>

@@ -1,4 +1,4 @@
-@(title: String)(content: Html)(implicit flash: Flash)
+@(title: String)(content: Html)(implicit flash: Flash, request: play.api.mvc.Request[_])
 
 <!DOCTYPE html>
 
@@ -12,9 +12,7 @@
         <div class="container-narrow">
             <div class="masthead">
                 <ul class="nav nav-pills pull-right">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li @if(routes.Application.index.url == request.path){class="active"}><a href="@routes.Application.index.url">Home</a></li>
                 </ul>
                 <h3 class="muted">@play.api.Play.current.configuration.getString("application.name").get</h3>
             </div>

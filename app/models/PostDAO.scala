@@ -63,10 +63,25 @@ object PostDAO extends PostDAO {
   object PostBSONReader extends BSONReader[Post] {
     def fromBSON(document: BSONDocument): Post = {
       val doc = document.toTraversable
+      implicit def bsonStringToString(bsonString: BSONString) = bsonString.value
+      implicit def bsonDateTimeToDateTime(bsonDateTime: BSONDateTime) = new DateTime(bsonDateTime.value)
+      val comments = doc.getAs[TraversableBSONArray]("comments").map {
+        _.toList.map(_.asInstanceOf[TraversableBSONDocument]).map {
+          commentAsBSON =>
+            for {
+              author <- commentAsBSON.getAs[BSONString]("author")
+              email <- commentAsBSON.getAs[BSONString]("email")
+              content <- commentAsBSON.getAs[BSONString]("content")
+              publishedAt <- commentAsBSON.getAs[BSONDateTime]("published_at")
+            } yield Comment(author, email, content, publishedAt)
+        }
+      }.getOrElse(Nil).map(_.get)
+
       Post(
         doc.getAs[BSONString]("_id").get.value,
         doc.getAs[BSONString]("title").get.value,
-        doc.getAs[BSONString]("content").get.value
+        doc.getAs[BSONString]("content").get.value,
+        comments
       )
     }
   }

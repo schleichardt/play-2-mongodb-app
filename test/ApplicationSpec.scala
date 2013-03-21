@@ -19,6 +19,7 @@ import play.api.test.Helpers.status
 import play.api.test.Helpers.CREATED
 import play.api.test.Helpers.OK
 import play.api.test.Helpers.SEE_OTHER
+import org.joda.time.DateTime
 
 /**
  * Add your spec here.
@@ -87,7 +88,16 @@ class TagPageSpec extends Specification {
 class PostPageSpec extends Specification {
   "The post page" should {
     "show a full post with it's comments" in {
-      Pending
+      "using a deserializer" in new WithApplication {
+        val post = await(PostDAO.byId("element14")).get
+        val firstComment = post.comments(0)
+        firstComment.author === "Bernd"
+        firstComment.content === "good page"
+        val secondComment = post.comments(1)
+        secondComment.author === "Frank Stallone"
+        secondComment.email === "frank@domain.tld"
+        secondComment.publishedAt === new DateTime(1353387915242L)
+      }
     }
 
     "enable a user to make a comment" in {

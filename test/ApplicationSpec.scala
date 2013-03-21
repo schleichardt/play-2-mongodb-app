@@ -29,27 +29,6 @@ import org.joda.time.DateTime
 import org.specs2.execute.Pending
 import models.Post
 
-/**
- * Add your spec here.
- * You can mock out a whole application including requests, plugins etc.
- * For more information, consult the wiki.
- */
-class ApplicationSpec extends Specification {
-  "Application" should {
-    "enable a user to registrate" in {
-      Pending
-    }
-
-    "enable a user to login" in {
-      Pending
-    }
-
-    "enable a user to logout" in {
-      Pending
-    }
-  }
-}
-
 object TestUtil {
   import TimeUnit._
 

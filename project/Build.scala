@@ -30,5 +30,8 @@ object ApplicationBuild extends Build {
     , logBuffered in Test := false
     , templatesImport ~= {current => current ++ Seq("views.TemplateUtil._")}
     , parallelExecution in Test := false
+    , resolvers ~= { res =>
+      res.filter(!_.name.contains("sonatype")) //sonatype is down on 21.03.2013 09:34
+    }
   ).settings(jacocoSettings : _*)
 }

@@ -12,7 +12,7 @@ object PostsController extends Controller {
   def save(id: String) = Action {
     implicit request =>
       Application.postForm.bindFromRequest().fold(
-        form => BadRequest(views.html.editPost(form, Option(id))),
+        form => BadRequest(views.html.editPost(form, None)),
         post => AsyncResult {
           import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
           import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,7 +30,7 @@ object PostsController extends Controller {
     AsyncResult {
       import scala.concurrent.ExecutionContext.Implicits.global
       postDAO.byId(id).map( postOption =>
-       postOption.map( post => Ok(views.html.editPost(Application.postForm.fill(post), Option(id)))).getOrElse(NotFound)
+        postOption.map( post => Ok(views.html.editPost(Application.postForm.fill(post), Option(post)))).getOrElse(NotFound)
       )
     }
   }

@@ -18,6 +18,9 @@ import play.api.test.Helpers.writeableOf_AnyContentAsFormUrlEncoded
 import play.api.test.Helpers.status
 import play.api.test.Helpers.CREATED
 import play.api.test.Helpers.OK
+import play.api.test.Helpers.POST
+import play.api.test.Helpers.GET
+import play.api.test.Helpers.writeableOf_AnyContentAsEmpty
 import play.api.test.Helpers.SEE_OTHER
 import org.joda.time.DateTime
 
@@ -95,8 +98,15 @@ class PostPageSpec extends Specification {
         firstComment.content === "good page"
         val secondComment = post.comments(1)
         secondComment.author === "Frank Stallone"
-        secondComment.email === "frank@domain.tld"
         secondComment.publishedAt === new DateTime(1353387915242L)
+      }
+
+      "in the HTML source code" in new WithApplication {
+        var request = { FakeRequest(GET, controllers.routes.PostsController.show("element14").url)}
+        val result = route(request).get
+        status(result) must be equalTo(OK)
+        val content = contentAsString(result)
+        content must contain("Frank Stallone")
       }
     }
 
@@ -108,7 +118,7 @@ class PostPageSpec extends Specification {
       val newTitle = "new title of 6"
       val newContent = "content update"
       val id = "element6"
-      var request = { FakeRequest("POST", controllers.routes.PostsController.save(id).url).withFormUrlEncodedBody("id" -> id, "title" -> newTitle, "content" -> newContent)}
+      var request = { FakeRequest(POST, controllers.routes.PostsController.save(id).url).withFormUrlEncodedBody("id" -> id, "title" -> newTitle, "content" -> newContent)}
       val result = route(request).get
       status(result) must be equalTo(SEE_OTHER)
       val changedPostOption = await(PostDAO.byId("element6"))

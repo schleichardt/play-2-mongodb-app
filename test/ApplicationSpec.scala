@@ -4,30 +4,21 @@ import org.specs2.mutable._
 
 import play.api.test._
 import play.api.test.Helpers.contentAsString
-import org.specs2.execute.Pending
-import models.{Post, PostDAO, MockPostDAO}
+import models.{PostDAO, MockPostDAO}
 import play.api.mvc._
 import org.openqa.selenium.WebDriver
 import com.google.common.base.Predicate
 import scala.collection.JavaConversions._
-import concurrent.{Await, Awaitable}
-import concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
-import play.api.test.Helpers.route
-import play.api.test.Helpers.writeableOf_AnyContentAsFormUrlEncoded
-import play.api.test.Helpers.status
-import play.api.test.Helpers.CREATED
-import play.api.test.Helpers.OK
-import play.api.test.Helpers.POST
-import play.api.test.Helpers.GET
-import play.api.test.Helpers.writeableOf_AnyContentAsEmpty
-import play.api.test.Helpers.SEE_OTHER
-import play.api.test.Helpers.headers
-import play.api.test.Helpers.cookies
-import play.api.test.Helpers.redirectLocation
+import play.api.test.Helpers._
 import org.joda.time.DateTime
+import scala._
 import org.specs2.execute.Pending
 import models.Post
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.entity.mime.MultipartEntity
+import org.apache.http.entity.mime.content.StringBody
 
 object TestUtil {
   import TimeUnit._
@@ -41,8 +32,6 @@ object TestUtil {
   implicit def function2Predicate(f: => Boolean) = new Predicate[WebDriver]{
     def apply(webDriver: WebDriver) = f
   }
-
-  def await[T](awaitable: Awaitable[T]) = Await.result(awaitable, Duration("12 seconds"))
 }
 
 import TestUtil._
@@ -98,16 +87,20 @@ class PostPageSpec extends Specification {
       Pending
     }
 
-    "enable a user to change a post" in new WithApplication {
+    "enable a user to change a post" in new WithServer {
       val newTitle = "new title of 6"
       val newContent = "content update"
       val id = "element6"
-      var request = { FakeRequest(POST, controllers.routes.PostsController.save(id).url).withFormUrlEncodedBody("id" -> id, "title" -> newTitle, "content" -> newContent)}
-      val redirectResult = route(request).get
-      status(redirectResult) must be equalTo(SEE_OTHER)
-      cookies(redirectResult).get("PLAY_FLASH").map(_.value.contains("success")) must beSome(true)
+      val url = "http://localhost:%d%s".format(port, controllers.routes.PostsController.save(id).url)
+      val post = new HttpPost(url)
+      val reqEntity = new MultipartEntity()
+      reqEntity.addPart("id", new StringBody(id))
+      reqEntity.addPart("title", new StringBody(newTitle))
+      reqEntity.addPart("content", new StringBody(newContent))
+      post.setEntity(reqEntity)
+      val response = new DefaultHttpClient().execute(post)
+      response.getStatusLine().getStatusCode() must beEqualTo(200)
 
-      val result = route(FakeRequest(GET, redirectLocation(redirectResult).get)).get
       val changedPostOption = await(PostDAO.byId("element6"))
       changedPostOption must beSome
       val changedPost: Post = changedPostOption.get

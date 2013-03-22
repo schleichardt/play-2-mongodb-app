@@ -16,11 +16,14 @@ import reactivemongo.api.QueryBuilder
 import play.api.libs.functional.syntax._
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
+import reactivemongo.core.commands.LastError
 
 trait PostDAO {
   def obtain(limit: Int = 10): Future[Seq[Post]] //TODO use a query builder
 
   def byId(id: String): Future[Option[Post]]
+
+  def updateBasics(post: Post): Future[LastError]
 }
 
 object PostDAO extends PostDAO {
@@ -58,6 +61,14 @@ object PostDAO extends PostDAO {
       }
       case _ => Futures.successful(None)
     }
+  }
+
+
+  def updateBasics(post: Post) = {
+    import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
+    val modifier = BSONDocument("$set" -> BSONDocument("title" -> BSONString(post.title), "content" -> BSONString(post.content)))
+    val query = BSONDocument("_id" -> BSONString(post.id))
+    PostDAO.collection.update(query, modifier)
   }
 
   object PostBSONReader extends BSONReader[Post] {

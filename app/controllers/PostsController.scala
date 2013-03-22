@@ -1,29 +1,36 @@
 package controllers
 
-import play.api.mvc.{AsyncResult, Action, Controller}
-import models.PostDAO
-import reactivemongo.bson.{BSONString, BSONDateTime, BSONDocument}
-import org.joda.time.DateTime
+import play.api.mvc.{MultipartFormData, AsyncResult, Action, Controller}
+import models.{Post, PostDAO}
+import play.api.data.Form
+import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.Logger
+import play.api.libs.Files.TemporaryFile
 
 object PostsController extends Controller {
   val postDAO: PostDAO = PostDAO
 
-  def save(id: String) = Action {
+  def save(id: String) = Action(parse.multipartFormData) {
     implicit request =>
-      Application.postForm.bindFromRequest().fold(
-        form => BadRequest(views.html.editPost(form, None)),
-        post => AsyncResult {
-          import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
-          import scala.concurrent.ExecutionContext.Implicits.global
-          val modifier = BSONDocument("$set" -> BSONDocument("title" -> BSONString(post.title), "content" -> BSONString(post.content)))
-          //TODO code to PostDAO
-          val query = BSONDocument("_id" -> BSONString(id))
-          PostDAO.collection.update(query, modifier).map { _ =>
+      def errorPath(form: Form[Post]) = {
+        Logger.info(form.errors.toString)
+        BadRequest(views.html.editPost(form, None))
+      }
+      def happyPath(post: Post) = {
+
+        val body: MultipartFormData[TemporaryFile] = request.body
+        body.file("picture").map { a =>
+          Logger.info("file has name " + a.filename)
+          a.filename
+        }
+
+        AsyncResult {
+          postDAO.updateBasics(post).map { _ => //TODO, does it really throw an error?
             Redirect(routes.PostsController.show(id)).flashing("success" -> s"Post ${post.title} successfully saved.")
           }
         }
-      )
+      }
+      Application.postForm.bindFromRequest().fold(errorPath, happyPath)
   }
 
   def show(id: String) = Action {implicit request =>

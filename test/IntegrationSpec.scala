@@ -14,6 +14,7 @@ import play.modules.reactivemongo._
 import play.modules.reactivemongo.PlayBsonImplicits._
 import play.api.test.WithApplication
 import test.TestUtil._
+import play.api.test.Helpers._
 
 class IntegrationSpec extends Specification {
   "Application" should {

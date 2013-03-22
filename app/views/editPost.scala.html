@@ -1,11 +1,12 @@
 @(postForm: Form[Post], postOption: Option[Post] = None)(implicit flash: Flash, request: play.api.mvc.Request[_])
 
 @main("Add a post") {
-    @helper.form(action = postOption.map(post => routes.PostsController.save(post.id)).getOrElse(routes.Application.addPost()), 'id -> "post-form") {
+    @helper.form(action = postOption.map(post => routes.PostsController.save(post.id)).getOrElse(routes.Application.addPost()), 'id -> "post-form", 'enctype -> "multipart/form-data") {
         @helper.inputText(postForm("id"), 'id -> "edit-post-id", 'class -> "input-xlarge", 'disabled -> "true")
         <input type="hidden" name="id" value="@postForm("id").value.getOrElse("")">
         @helper.inputText(postForm("title"), 'id -> "edit-post-title", 'class -> "input-xlarge")
         @helper.textarea(postForm("content"), 'id -> "edit-post-content", 'class -> "input-xlarge", 'rows -> "10")
+        <input type="file" name="picture">
         <button type="submit" class="btn btn-primary" id="edit-post-submit">Save</button>
     }
 

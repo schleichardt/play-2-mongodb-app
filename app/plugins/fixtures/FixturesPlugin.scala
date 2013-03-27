@@ -17,7 +17,6 @@ class FixturesPlugin(app: Application) extends Plugin {
   override def enabled = filesOption.isDefined && !filesOption.get.isEmpty
 
   override def onStart() {
-    super.onStart()
     filesOption.get.foreach { fileName =>
       loadFile(fileName)
     }

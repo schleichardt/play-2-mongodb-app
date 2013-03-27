@@ -36,7 +36,6 @@ class FixturesPlugin(app: Application) extends Plugin {
   def importToCollection(collectionName: String, array: JsArray) {
     Logger.info(s"filling collection $collectionName")
     val collection = ReactiveMongoPlugin.db(app)(collectionName)
-    //@TODO batch processing possible?
     val allInserts = array.value map {
       document =>
         collection.insert(document)

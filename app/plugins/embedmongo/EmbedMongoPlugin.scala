@@ -18,8 +18,8 @@ class EmbedMongoPlugin(app: Application) extends Plugin {
 
   override def onStart() {
     super.onStart()
-    val runtimeConfig = RuntimeConfig.getInstance(JLogger.getLogger("embedmongo"));
-    val runtime = MongodStarter.getInstance(runtimeConfig);
+    val runtimeConfig = RuntimeConfig.getInstance(JLogger.getLogger("embedmongo"))
+    val runtime = MongodStarter.getInstance(runtimeConfig)
     val versionNumber = app.configuration.getString("embedmongo.dbversion").get
     val version = new GenericVersion(versionNumber)
     val port = app.configuration.getInt("embedmongo.port").get

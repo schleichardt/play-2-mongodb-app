@@ -1,0 +1,16 @@
+[
+    {
+        "_id" : "smith",
+        "name" : "Smith",
+        "street" : "Treskowallee 1",
+        "postcode" : "10318",
+        "city" : "Berlin"
+    },
+    {
+        "_id" : "McGarrett",
+        "name" : "McGarrett",
+        "street" : "Mellenseestrasse 4",
+        "postcode" : "10319",
+        "city" : "Berlin"
+    }
+]

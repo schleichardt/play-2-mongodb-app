@@ -1,3 +1,4 @@
 380:plugins.embedmongo.EmbedMongoPlugin
 400:play.modules.reactivemongo.ReactiveMongoPlugin
-9999:plugins.fixtures.FixturesPlugin
+500:plugins.fixtures.FixturesPlugin
+520:plugins.documentevolution.DocumentEvolutionPlugin

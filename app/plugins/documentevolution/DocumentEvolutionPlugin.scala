@@ -17,18 +17,19 @@ class DocumentEvolutionPlugin(implicit app: Application) extends Plugin {
 private[documentevolution] trait Migration {
   /** the query to obtain all documents that have to be migrated */
   def query: BSONDocument
-  def migrateSingleDocument(doc: TraversableBSONDocument): Unit
+  /** migrates {@code doc} and saves it. */
+  def migrate(doc: TraversableBSONDocument): Unit
   def collectionName: String
   implicit val application: Application
   lazy val collection = ReactiveMongoPlugin.db.apply(collectionName)
   def apply(): Future[Iteratee[TraversableBSONDocument, Unit]] = {
     Logger.info("applying " + this.getClass.getCanonicalName)
-    collection.find(query).enumerate.apply(Iteratee.foreach(migrateSingleDocument))
+    collection.find(query).enumerate.apply(Iteratee.foreach(migrate))
   }
 }
 
 private[documentevolution] class Migration1to2(implicit val application: Application) extends Migration {
-  override def migrateSingleDocument(doc: TraversableBSONDocument) {
+  override def migrate(doc: TraversableBSONDocument) {
     val modifier = BSONDocument(
       "$unset" -> BSONDocument(
         "postcode" -> new BSONInteger(1),

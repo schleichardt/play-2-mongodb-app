@@ -31,14 +31,14 @@ class IntegrationSpec extends Specification {
     "migrate the json structure" in new WithApplication {
       val dbx = ReactiveMongoPlugin.db
       val collection = dbx("persons")
-      val cursor = collection.find(BSONDocument("_id" -> BSONString("smith")))
+      val cursor = collection.find(BSONDocument("_id" -> BSONString("McGarrett")))
       val documents = await(cursor.toList)
       documents.size must beEqualTo(1)
-      val smith: JsValue = documents(0)
+      val mcgarrett: JsValue = documents(0)
 
-      (smith \ "name").as[String] === "Smith"
-      (smith \ "address" \ "street").as[String] === "Treskowallee 1"
-      (smith \ "address" \ "city").as[String] === "Berlin"
+      (mcgarrett \ "name").as[String] === "McGarrett"
+      (mcgarrett \ "address" \ "street").as[String] === "Mellenseestrasse 4"
+      (mcgarrett \ "address" \ "city").as[String] === "Berlin"
     }
   }
 }

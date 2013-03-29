@@ -19,7 +19,7 @@ import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import reactivemongo.core.commands.LastError
 
 trait PostDAO {
-  def obtain(limit: Int = 10): Future[Seq[Post]] //TODO use a query builder
+  def obtain(limit: Int = 10): Future[Seq[Post]]
 
   def byId(id: String): Future[Option[Post]]
 

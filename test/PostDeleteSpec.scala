@@ -16,7 +16,8 @@ class PostDeleteSpec extends Specification {
       val path = controllers.routes.PostsController.show(id).url
       browser.goTo(s"http://localhost:$port%s".format(path))
       browser.click("#delete-post")
-      createWait(browser).until(browser.$(".alert").getTexts.mkString.contains("successfully deleted"))
+      createWait(browser).until(browser.$(".alert").getTexts.mkString.
+        contains("successfully deleted"))
       postExists === false
     }
   }

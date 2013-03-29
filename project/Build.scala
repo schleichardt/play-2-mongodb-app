@@ -35,9 +35,9 @@ object ApplicationBuild extends Build {
       res.filter(!_.name.contains("sonatype")) //sonatype is down on 21.03.2013 09:34
     }
   ).settings(
-    jacocoSettings : _*
+    jacocoSettings : _* //run jacoco code coverage with: sbt jacoco:cover, reports are in target/scala-2.10/jacoco/html/index.html
   ).settings(
-    ScctPlugin.instrumentSettings: _*
+    ScctPlugin.instrumentSettings: _* //run SCCT code coverage with: sbt scct:test, reports are in target/scala-2.10/coverage-report/index.html
   ).settings(
     parallelExecution in test := false
     , unmanagedResourceDirectories in ScctPlugin.ScctTest <+= baseDirectory( _ / "conf")

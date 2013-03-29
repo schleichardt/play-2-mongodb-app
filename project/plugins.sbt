@@ -12,3 +12,11 @@ libraryDependencies ++= Seq(
   "org.jacoco" % "org.jacoco.report" % "0.5.9.201207300726" artifacts(Artifact("org.jacoco.report", "jar", "jar")))
 
 addSbtPlugin("de.johoop" % "jacoco4sbt" % "1.2.4")
+
+
+resolvers += "scct-github-repository" at "http://mtkopone.github.com/scct/maven-repo"
+
+addSbtPlugin("reaktor" % "sbt-scct" % "0.2-SNAPSHOT")
+
+addSbtPlugin("play" % "sbt-plugin" % "2.0.4")
+

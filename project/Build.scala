@@ -34,5 +34,12 @@ object ApplicationBuild extends Build {
     , resolvers ~= { res =>
       res.filter(!_.name.contains("sonatype")) //sonatype is down on 21.03.2013 09:34
     }
-  ).settings(jacocoSettings : _*)
+  ).settings(
+    jacocoSettings : _*
+  ).settings(
+    ScctPlugin.instrumentSettings: _*
+  ).settings(
+    parallelExecution in test := false
+    , unmanagedResourceDirectories in ScctPlugin.ScctTest <+= baseDirectory( _ / "conf")
+  )
 }

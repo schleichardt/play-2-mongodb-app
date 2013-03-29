@@ -33,24 +33,6 @@ object TestUtil {
   }
 }
 
-
-class StartPageSpec extends Specification {
-  "The start page" should {
-    "show the teasers of the 10 most recent blog posts" in new WithApplication {
-      val result: Result = controllers.Application.index()(FakeRequest())
-      val content = contentAsString(result)
-      for (i <- 5 to 14) {
-        content must contain(s"title $i")
-    }
-      content must not contain("title 4")
-    }
-
-    "makes older posts paginated available" in {
-      Pending
-    }
-  }
-}
-
 class TagPageSpec extends Specification {
   "The tag page" should {
     "show posts according a tag" in {

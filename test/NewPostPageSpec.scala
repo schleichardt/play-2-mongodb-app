@@ -21,6 +21,6 @@ class NewPostPageSpec extends Specification {
       val persistedPost = await(PostDAO.obtain(1)).head
       persistedPost.title must beEqualTo(postTemplate.title)
       persistedPost.content must beEqualTo(postTemplate.content)
-    }.pendingUntilFixed("in progress")
+    }
   }
 }

@@ -1,6 +1,6 @@
 @(postForm: Form[Post], postOption: Option[Post] = None)(implicit flash: Flash, request: play.api.mvc.Request[_])
 
-@main("Add a post") {
+@main(postOption.map(_.title).getOrElse("add a new post")) {
     @helper.form(action = postOption.map(post => routes.PostsController.save(post.id)).getOrElse(routes.Application.addPost()), 'id -> "post-form", 'enctype -> "multipart/form-data") {
         @helper.inputText(postForm("id"), 'id -> "edit-post-id", 'class -> "input-xlarge", 'disabled -> "true")
         <input type="hidden" name="id" value="@postForm("id").value.getOrElse("")">
@@ -8,7 +8,16 @@
         @helper.textarea(postForm("content"), 'id -> "edit-post-content", 'class -> "input-xlarge", 'rows -> "10")
         <input type="file" name="picture">
         <button type="submit" class="btn btn-primary" id="edit-post-submit">Save</button>
+        @postOption.map { post =>
+            <button type="button" class="btn btn-danger delete" id="delete-post" data-post-title="@post.title">Delete</button>
+        }
     }
+
+    @postOption.map { post =>
+        @helper.form(action = routes.PostsController.delete(post.id), 'id -> "post-delete-form") {
+        }
+    }
+
 
     <h4>Comments</h4>
     @postOption.map(_.comments).getOrElse(Nil).map { comment =>

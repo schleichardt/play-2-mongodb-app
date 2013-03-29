@@ -24,6 +24,8 @@ trait PostDAO {
   def byId(id: String): Future[Option[Post]]
 
   def updateBasics(post: Post): Future[LastError]
+
+  def delete(id: String): Future[LastError]
 }
 
 object PostDAO extends PostDAO {
@@ -47,7 +49,6 @@ object PostDAO extends PostDAO {
     collection.find[JsValue]( qb ).toList(upTo = limit).map { postsJson =>
       postsJson.map {element =>
         val post = Json.fromJson[Post](element).get
-        println(post)
       post }
     }
   }
@@ -111,4 +112,6 @@ object PostDAO extends PostDAO {
       )
     }
   }
+
+  def delete(id: String) = collection.remove(BSONDocument("_id" -> BSONString(id)))
 }

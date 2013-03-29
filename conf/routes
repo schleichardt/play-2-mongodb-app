@@ -8,6 +8,7 @@ GET     /post/new                   controllers.Application.showCreatePostForm
 POST    /post/new                   controllers.Application.addPost
 GET     /post/:id                   controllers.PostsController.show(id)
 POST    /post/:id                   controllers.PostsController.save(id)
+POST    /post/:id/delete            controllers.PostsController.delete(id)
 
 GET     /assets/webjars/*file       controllers.WebJarAssets.at(file)
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

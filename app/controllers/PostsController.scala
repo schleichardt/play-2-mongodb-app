@@ -35,10 +35,18 @@ object PostsController extends Controller {
 
   def show(id: String) = Action {implicit request =>
     AsyncResult {
-      import scala.concurrent.ExecutionContext.Implicits.global
       postDAO.byId(id).map( postOption =>
         postOption.map( post => Ok(views.html.editPost(Application.postForm.fill(post), Option(post)))).getOrElse(NotFound)
       )
+    }
+  }
+
+  def delete(id: String) = Action {implicit request =>
+    AsyncResult {
+      postDAO.delete(id).map { _ =>
+        Logger.info(s"deleting $id")
+        Redirect(routes.Application.index).flashing("success" -> s"successfully deleted $id")
+      }
     }
   }
 }

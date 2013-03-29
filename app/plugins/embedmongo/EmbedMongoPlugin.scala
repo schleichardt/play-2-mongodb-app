@@ -6,7 +6,6 @@ import de.flapdoodle.embed.mongo.config.{RuntimeConfig, MongodConfig}
 import de.flapdoodle.embed.process.runtime.Network
 import de.flapdoodle.embed.process.distribution.GenericVersion
 import java.util.logging.{Logger => JLogger}
-import java.net.ServerSocket
 
 /** provides a MongoDB instance for development and testing
   * Hast to be loaded before any other MongoDB related plugin.
@@ -24,7 +23,6 @@ class EmbedMongoPlugin(app: Application) extends Plugin {
     val versionNumber = app.configuration.getString("embedmongo.dbversion").get
     val version = new GenericVersion(versionNumber)
     val port = app.configuration.getInt("embedmongo.port").get
-    EmbedMongoPlugin.releasePort()
     mongoExe = runtime.prepare(new MongodConfig(version, port, Network.localhostIsIPv6()))
     process = mongoExe.start()
     Logger.info(s"started embedmongo on port $port")
@@ -43,21 +41,5 @@ class EmbedMongoPlugin(app: Application) extends Plugin {
 }
 
 object EmbedMongoPlugin {
-  private var socket: ServerSocket = _
-  private var port: Int = 0
-
-  def reservePort() = {
-    socket = new ServerSocket(0)
-    port = socket.getLocalPort
-    port
-  }
-
-  def releasePort() {
-    try {
-      if (socket != null)
-        socket.close()
-    } finally {
-      socket = null
-    }
-  }
+  def freePort() = Network.getFreeServerPort
 }

@@ -23,8 +23,11 @@ object ApplicationBuild extends Build {
     parallelExecution in jacoco.Config := false
     , jacoco.excludes in jacoco.Config ~= { _ ++ Seq("**.ref.**", "**.Reverse*", "views.html.**", "Routes*", "controllers.routes**") }
     , testOptions in jacoco.Config += Tests.Argument("junitxml", "console")
-    , testOptions in test += Tests.Argument("junitxml", "console")
-    , testOptions in ScctPlugin.ScctTest += Tests.Argument("junitxml", "console")
+  )
+
+  lazy val scctSettings = ScctPlugin.instrumentSettings ++ Seq(
+    testOptions in ScctPlugin.ScctTest += Tests.Argument("junitxml", "console")
+    , unmanagedResourceDirectories in ScctPlugin.ScctTest <+= baseDirectory( _ / "conf")
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
@@ -33,15 +36,9 @@ object ApplicationBuild extends Build {
     , logBuffered in Test := false
     , templatesImport ~= {current => current ++ Seq("views.TemplateUtil._")}
     , parallelExecution in Test := false
-    , resolvers ~= { res =>
-      res.filter(!_.name.contains("sonatype")) //sonatype is down on 21.03.2013 09:34
-    }
   ).settings(
     jacocoSettings : _* //run jacoco code coverage with: sbt jacoco:cover, reports are in target/scala-2.10/jacoco/html/index.html
   ).settings(
-    ScctPlugin.instrumentSettings: _* //run SCCT code coverage with: sbt scct:test, reports are in target/scala-2.10/coverage-report/index.html
-  ).settings(
-    parallelExecution in test := false
-    , unmanagedResourceDirectories in ScctPlugin.ScctTest <+= baseDirectory( _ / "conf")
+    scctSettings: _* //run SCCT code coverage with: sbt scct:test, reports are in target/scala-2.10/coverage-report/index.html
   )
 }

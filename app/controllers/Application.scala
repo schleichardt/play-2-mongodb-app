@@ -7,6 +7,7 @@ import concurrent.ExecutionContext.Implicits.global
 import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
+import templates.Html
 
 trait Application {
   this: Controller =>
@@ -33,13 +34,16 @@ trait Application {
   }
 
   def addPost = Action { implicit request =>
-    val filledForm = postForm.bindFromRequest
-    filledForm.fold(
-      formWithErrors =>
-        BadRequest(views.html.editPost(formWithErrors, None)),
-      value =>
-        Redirect(routes.Application.index()).flashing("success" -> "Post successfully created.") //TODO go to edit page of post
-    )
+    val successPath: (Post) => AsyncResult = post => {
+      Async {
+        postDAO.insert(post).map { _ =>
+          Redirect(routes.Application.index()).flashing("success" -> s"Post ${post.title} successfully created.")
+        }
+      }
+    }
+    val hasErrorsPath: (Form[Post]) => SimpleResult[Html] = formWithErrors =>
+      BadRequest(views.html.editPost(formWithErrors, None))
+    postForm.bindFromRequest.fold(hasErrorsPath, successPath)
   }
 }
 

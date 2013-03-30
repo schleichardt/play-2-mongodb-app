@@ -8,4 +8,5 @@ object MockPostDAO extends PostDAO {
   def byId(id: String) = ???
   def updateBasics(post: Post) = ???
   def delete(id: String) = ???
+  def insert(post: Post) = ???
 }

@@ -17,6 +17,7 @@ import play.api.libs.functional.syntax._
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import reactivemongo.core.commands.LastError
+import java.util.Date
 
 trait PostDAO {
   def obtain(limit: Int = 10): Future[Seq[Post]]
@@ -24,6 +25,8 @@ trait PostDAO {
   def byId(id: String): Future[Option[Post]]
 
   def updateBasics(post: Post): Future[LastError]
+
+  def insert(post: Post): Future[LastError]
 
   def delete(id: String): Future[LastError]
 }
@@ -108,10 +111,16 @@ object PostDAO extends PostDAO {
       BSONDocument(
         "_id" -> id,
         "title" -> BSONString(post.title),
-        "content" -> BSONString(post.content)
+        "content" -> BSONString(post.content),
+        "published_at" -> BSONDateTime(new Date().getTime)
       )
     }
   }
 
   def delete(id: String) = collection.remove(BSONDocument("_id" -> BSONString(id)))
+
+  def insert(post: Post) = {
+    implicit val writer = PostBSONWriter
+    collection.insert(post)
+  }
 }

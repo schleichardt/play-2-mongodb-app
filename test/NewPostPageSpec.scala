@@ -17,7 +17,8 @@ class NewPostPageSpec extends Specification {
       browser.fill("#edit-post-title").`with`(postTemplate.title)
       browser.fill("#edit-post-content").`with`(postTemplate.content)
       browser.$("#edit-post-submit").click()
-      createWait(browser).until(browser.$(".alert").getTexts.mkString.contains("successfully created"))
+      createWait(browser).until(browser.$(".alert").getTexts.
+        mkString.contains("successfully created"))
       val persistedPost = await(PostDAO.obtain(1)).head
       persistedPost.title must beEqualTo(postTemplate.title)
       persistedPost.content must beEqualTo(postTemplate.content)

@@ -17,6 +17,8 @@ object ApplicationBuild extends Build {
     , "org.webjars" % "webjars-play" % "2.1.0"
     , "org.webjars" % "bootstrap" % "2.2.2-1" //2.3.0 and 2.3.1 freeze the tests
     , "joda-time" % "joda-time" % "2.2"
+    , "org.springframework.data" % "spring-data-mongodb" % "1.2.0.RELEASE"
+    , "cglib" % "cglib" % "2.2.2"
   )
 
   lazy val jacocoSettings = jacoco.settings ++ Seq(

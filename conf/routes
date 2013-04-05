@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET     /s                          controllers.Application.springdata
 GET     /post/new                   controllers.Application.showCreatePostForm
 POST    /post/new                   controllers.Application.addPost
 GET     /post/:id                   controllers.PostsController.show(id)

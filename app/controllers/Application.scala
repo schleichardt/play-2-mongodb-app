@@ -8,6 +8,8 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import templates.Html
+import springdata.{Person, ApplicationConfig, SomeClient}
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 trait Application {
   this: Controller =>
@@ -27,6 +29,15 @@ trait Application {
     Async {
       postDAO.obtain().map(posts => Ok(views.html.index(posts)))
     }
+  }
+
+  def springdata = Action { implicit request =>
+    val context = new AnnotationConfigApplicationContext(classOf[ApplicationConfig])
+    context.scan("springdata", "controllers")
+    val someClientBean = context.getBean(classOf[SomeClient])
+
+    someClientBean.getRepository.save(new Person("Steve"))
+    Ok("found " + someClientBean.getRepository.findByName("Steve").get(0))
   }
 
   def showCreatePostForm = Action { implicit request =>

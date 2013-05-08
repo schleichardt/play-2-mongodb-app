@@ -16,7 +16,7 @@ object ApplicationBuild extends Build {
     , "org.webjars" % "webjars-play" % "2.1.0"
     , "org.webjars" % "bootstrap" % "2.2.2-1" //2.3.0 and 2.3.1 freeze the tests
     , "joda-time" % "joda-time" % "2.2"
-    , "info.schleichardt" %% "play-embed-mongo" % "0.1-SNAPSHOT"
+    , "info.schleichardt" %% "play-embed-mongo" % "0.2"
   )
 
   lazy val jacocoSettings = jacoco.settings ++ Seq(

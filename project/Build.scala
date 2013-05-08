@@ -13,10 +13,10 @@ object ApplicationBuild extends Build {
     "org.reactivemongo" %% "reactivemongo" % "0.8"
     , "org.reactivemongo" %% "play2-reactivemongo" % "0.8"
     , "junit" % "junit-dep" % "4.11" % "test"
-    , "de.flapdoodle.embed" % "de.flapdoodle.embed.mongo" % "1.28"
     , "org.webjars" % "webjars-play" % "2.1.0"
     , "org.webjars" % "bootstrap" % "2.2.2-1" //2.3.0 and 2.3.1 freeze the tests
     , "joda-time" % "joda-time" % "2.2"
+    , "info.schleichardt" %% "play-embed-mongo" % "0.1-SNAPSHOT"
   )
 
   lazy val jacocoSettings = jacoco.settings ++ Seq(

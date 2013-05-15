@@ -1,8 +1,6 @@
 import sbt._
 import Keys._
 import play.Project._
-import de.johoop.jacoco4sbt._
-import JacocoPlugin._
 
 object ApplicationBuild extends Build {
 
@@ -19,26 +17,11 @@ object ApplicationBuild extends Build {
     , "info.schleichardt" %% "play-embed-mongo" % "0.2"
   )
 
-  lazy val jacocoSettings = jacoco.settings ++ Seq(
-    parallelExecution in jacoco.Config := false
-    , jacoco.excludes in jacoco.Config ~= { _ ++ Seq("**.ref.**", "**.Reverse*", "views.html.**", "Routes*", "controllers.routes**") }
-    , testOptions in jacoco.Config += Tests.Argument("junitxml", "console")
-  )
-
-  lazy val scctSettings = ScctPlugin.instrumentSettings ++ Seq(
-    testOptions in ScctPlugin.ScctTest += Tests.Argument("junitxml", "console")
-    , unmanagedResourceDirectories in ScctPlugin.ScctTest <+= baseDirectory( _ / "conf")
-  )
-
   val main = play.Project(appName, appVersion, appDependencies).settings(
     resolvers += Resolver.sonatypeRepo("snapshots")
     , testOptions in Test += Tests.Argument("junitxml", "console")
     , logBuffered in Test := false
     , templatesImport ~= {current => current ++ Seq("views.TemplateUtil._")}
     , parallelExecution in Test := false
-  ).settings(
-    jacocoSettings : _* //run jacoco code coverage with: sbt jacoco:cover, reports are in target/scala-2.10/jacoco/html/index.html
-  ).settings(
-    scctSettings: _* //run SCCT code coverage with: sbt scct:test, reports are in target/scala-2.10/coverage-report/index.html
   )
 }

@@ -1,7 +1,3 @@
-# Commands
-* Code Coverage: `sbt jacoco:cover`
-    * target/scala-2.10/jacoco/html/index.html contains the report
-
 # Licence
 
 This software is licensed under the Apache 2 license, quoted below.
